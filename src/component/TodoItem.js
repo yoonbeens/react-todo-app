@@ -5,7 +5,7 @@ import cn from 'classnames';
 import './scss/TodoItem.scss'
 import classNames from 'classnames'
 
-const TodoItem = ({ item, remove, check, count }) => {
+const TodoItem = ({ item, remove, check}) => {
 
   const {id, title, done} = item;
   return (

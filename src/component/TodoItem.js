@@ -5,14 +5,14 @@ import cn from 'classnames';
 import './scss/TodoItem.scss'
 import classNames from 'classnames'
 
-const TodoItem = ({ item, remove, check}) => {
+const TodoItem = ({ item, remove, check }) => {
 
   const {id, title, done} = item;
   return (
     <li className='todo-list-item'>
       <div 
       className={cn('check-circle', {active: done})}
-      onClick={() => check(id)}
+      onClick={() => check(id, done)}
       >
         {done && <MdDone />}
       </div>

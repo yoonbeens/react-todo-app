@@ -100,8 +100,7 @@ const TodoTemplate = () => {
 
   //체크가 안된 할일의 개수를 카운트 하기
   const countRestTodo = () => {
-    console.log("todos: "+todos);
-    console.log("l: "+todos.filter(todo => !todo.done).length);
+    console.log("todos: " + todos);
     //done이 false인 애들의 수를 리턴하자
     return todos.filter(todo => !todo.done).length; 
   };

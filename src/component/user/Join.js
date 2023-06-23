@@ -2,7 +2,16 @@ import React, { useState } from 'react'
 import {Button, Container, Grid,
     TextField, Typography, Link} from "@mui/material";
 
+//리다이렉트 사용하기
+import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL as BASE, USER } from '../../config/host-config';
+
 const Join = () => {
+
+    //리다이렉트 사용하기
+    const redirection = useNavigate();
+
+    const API_BASE_URL = BASE + USER;
 
     //상태변수로 회원가입 입력값 관리
     const [userValue, setUserValue] = useState({
@@ -66,13 +75,58 @@ const Join = () => {
 
     };
 
+    //이메일 중복체크 서버 통신 함수
+    const fetchDuplicateCheck = email => {
+
+        let msg= '', flag = false;
+        fetch(`${API_BASE_URL}/check?email=${email}`)
+            .then(res => {
+                if(res.status === 200) {
+                    return res.json();
+                }
+            })
+            .then(json => { 
+                console.log(json);
+                if(json) {
+                    msg = '이메일이 중복되었습니다!'
+                } else {
+                    msg = '사용 가능한 이메일입니다.';
+                    flag = true;
+                }
+
+                setUserValue({...userValue, email: email});
+                setMessage({...message, email: msg});
+                setCorrect({...correct, email: flag});
+            })
+            .catch(err => {
+                console.log('서버 통신이 원활하지 않습니다');
+            });
+
+
+    };
 
     //이메일 입력창 체인지 이벤트 핸들러
     const emailHandler = e => {
     
         const inputVal = e.target.value;
 
-        setUserValue({...userValue, email: inputVal});
+        const emailRegex = /^[a-z0-9\.\-_]+@([a-z0-9\-]+\.)+[a-z]{2,6}$/;
+
+        let msg, flag = false;
+        if(!inputVal) {
+            msg = '이메일은 필수값입니다';
+        } else if(!emailRegex.test(inputVal)) {
+            msg = '이메일 형식이 아닙니다';
+        } else {
+            //이메일 중복 체크
+
+            //체인지 이벤트로 처리 시 비효율적이므로 
+            //버튼 클릭이벤트가 발생하면 fetch가 발생하게 나중에 바꿔보자
+            fetchDuplicateCheck(inputVal);
+            return;
+        }
+
+        saveInputState({ key: 'email', inputVal, msg, flag });
     
     };
     
@@ -84,7 +138,7 @@ const Join = () => {
         document.getElementById('password-check').value = '';
         document.getElementById('check-span').textContent = '';
 
-        setMessage({...message, passwordCheck: ''});
+        setMessage({...message, passwordCheck: ''}); //없으면 안되는 걸까?
         setCorrect({...correct, passwordCheck: false});
     
         const inputVal = e.target.value;
@@ -109,6 +163,7 @@ const Join = () => {
     const pwCheckHandler = e => {
         //검증 시작
         let msg, flag = false;
+        
         if(!e.target.value) {
             msg = '비밀번호 확인란은 필수입니다';
         } else if(userValue.password !== e.target.value) {
@@ -127,10 +182,49 @@ const Join = () => {
 
     }
 
+
+    //4개의 입력칸이 모두 검증에 통과했는지 여부를 검사
+    const isValid = () => {
+
+        for(const key in correct) {
+            const flag = correct[key]; //correct.key
+            if(!flag) return false;
+        }
+        return true;
+    }
+
+    //회원가입처리 서버 요청
+    const fetchSignUpPost = () => {
+        fetch(API_BASE_URL, {
+            method: 'POST',
+            headers: {'content-type' : 'application/json'},
+            body: JSON.stringify(userValue)
+        })
+        .then(res => {
+            if(res.status === 200) {
+                alert('화원 가입에 성공했습니다!');
+                //로그인 페이지로 리다이렉트
+                // window.location.href = '/login';
+                redirection('/login')
+            } else {
+                alert('서버와의 통신이 원활하지 않습니다');
+            }
+        })
+    }
+
+    // 회원가입 버튼 클릭 이벤트 핸들러
     const joinButtonClickHandler = e => {
         //기본 기능 정지
         e.preventDefault();
-        console.log(userValue);
+        
+        //회원 가입 서버 요청
+        if(isValid()) {
+            fetchSignUpPost();
+         
+        } else {
+            alert('입력란을 다시 확인해주세요!');
+        }
+
     };
 
 

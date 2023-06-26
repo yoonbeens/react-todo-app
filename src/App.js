@@ -6,6 +6,8 @@ import TodoTemplate from './component/todo/TodoTemplate';
 import Login from './component/user/Login';
 import Join from './component/user/Join';
 
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 function App() {
   return (
     <>

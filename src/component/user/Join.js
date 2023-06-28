@@ -1,15 +1,28 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {Button, Container, Grid,
     TextField, Typography, Link} from "@mui/material";
 
 //리다이렉트 사용하기
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL as BASE, USER } from '../../config/host-config';
+import AuthContext from '../../util/AuthContext';
+import CustomSnackBar from '../layout/CustomSnackBar';
 
 const Join = () => {
 
     //리다이렉트 사용하기
     const redirection = useNavigate();
+    const { isLoggedIn } = useContext(AuthContext);
+    const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        if(isLoggedIn) {
+            setOpen(true);
+            setTimeout(() => {
+                redirection('/');
+            }, 3000);
+        }
+    }, [isLoggedIn, redirection]);
 
     const API_BASE_URL = BASE + USER;
 
@@ -229,102 +242,104 @@ const Join = () => {
 
 
     return (
-        <Container component="main" maxWidth="xs" style={{ margin: "200px auto" }}>
-            <form noValidate>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <Typography component="h1" variant="h5">
-                            계정 생성
-                        </Typography>
+        <>
+            {!isLoggedIn &&
+            <Container component="main" maxWidth="xs" style={{ margin: "200px auto" }}>
+                <form noValidate>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Typography component="h1" variant="h5">
+                                계정 생성
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                autoComplete="fname"
+                                name="username"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="username"
+                                label="유저 이름"
+                                autoFocus
+                                onChange={nameHandler}
+                            />
+                            <span style={correct.userName ? {color : 'green'} : {color : 'red'}}>
+                                {message.userName}
+                            </span>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="email"
+                                label="이메일 주소"
+                                name="email"
+                                autoComplete="email"
+                                onChange={emailHandler}
+                            />
+                            <span style={correct.email ? {color : 'green'} : {color : 'red'}}>
+                                {message.email}
+                            </span>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                name="password"
+                                label="패스워드"
+                                type="password"
+                                id="password"
+                                autoComplete="current-password"
+                                onChange={passwordHandler}
+                            />
+                            <span style={correct.password ? {color : 'green'} : {color : 'red'}}>
+                                {message.password}
+                            </span>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                name="password-check"
+                                label="패스워드 확인"
+                                type="password"
+                                id="password-check"
+                                autoComplete="check-password"
+                                onChange={pwCheckHandler}
+                            />
+                            <span id='check-span' style={correct.passwordCheck
+                                ? {color : 'green'} : {color : 'red'}}>
+                                {message.passwordCheck}
+                            </span>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button
+                              type="submit"
+                              fullWidth
+                              variant="contained"
+                              style={{background: '#38d9a9'}}
+                              onClick={joinButtonClickHandler}
+                            >
+                                계정 생성
+                            </Button>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            autoComplete="fname"
-                            name="username"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            id="username"
-                            label="유저 이름"
-                            autoFocus
-                            onChange={nameHandler}
-                        />
-                        <span style={correct.userName ? {color : 'green'} : {color : 'red'}}>
-                            {message.userName}
-                        </span>
-
+                    <Grid container justify="flex-end">
+                        <Grid item>
+                            <Link href="/login" variant="body2">
+                                이미 계정이 있습니까? 로그인 하세요.
+                            </Link>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            variant="outlined"
-                            required
-                            fullWidth
-                            id="email"
-                            label="이메일 주소"
-                            name="email"
-                            autoComplete="email"
-                            onChange={emailHandler}
-                        />
-                        <span style={correct.email ? {color : 'green'} : {color : 'red'}}>
-                            {message.email}
-                        </span>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            variant="outlined"
-                            required
-                            fullWidth
-                            name="password"
-                            label="패스워드"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                            onChange={passwordHandler}
-                        />
-                        <span style={correct.password ? {color : 'green'} : {color : 'red'}}>
-                            {message.password}
-                        </span>
-                    </Grid>
-    
-                    <Grid item xs={12}>
-                        <TextField
-                            variant="outlined"
-                            required
-                            fullWidth
-                            name="password-check"
-                            label="패스워드 확인"
-                            type="password"
-                            id="password-check"
-                            autoComplete="check-password"
-                            onChange={pwCheckHandler}
-                        />
-                        <span id='check-span' style={correct.passwordCheck 
-                            ? {color : 'green'} : {color : 'red'}}>
-                            {message.passwordCheck}
-                        </span>
-                    </Grid>
-    
-                    <Grid item xs={12}>
-                        <Button 
-                          type="submit" 
-                          fullWidth 
-                          variant="contained" 
-                          style={{background: '#38d9a9'}}
-                          onClick={joinButtonClickHandler}
-                        >
-                            계정 생성
-                        </Button>
-                    </Grid>
-                </Grid>
-                <Grid container justify="flex-end">
-                    <Grid item>
-                        <Link href="/login" variant="body2">
-                            이미 계정이 있습니까? 로그인 하세요.
-                        </Link>
-                    </Grid>
-                </Grid>
-            </form>
-        </Container>
+                </form>
+            </Container>
+            }
+            <CustomSnackBar open={open} />
+        </>
       );
 
 }

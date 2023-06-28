@@ -23,13 +23,13 @@ export const AuthContextProvider = props => {
             setIsLoggedIn(true);
             setUserName(localStorage.getItem('LOGIN_USERNAME'));
         }
-    }, []);
+    }, []); //[]빈 배열이면 한번만 실행. 안쓰면 뭐였지?
 
 
     //로그아웃 핸들러
     const logoutHandler = () => {
         localStorage.clear();
-        setIsLoggedIn(false)
+        setIsLoggedIn(false);
     }
 
     //로그인 핸들러

@@ -18,12 +18,12 @@ const TodoTemplate = () => {
 
   // 로그인 인증 토큰 얻어오기
   const [token, setToken] = useState(getLoginUserInfo().token);
+  // == const token = getLoginUserInfo().token;
 
   const redirection = useNavigate();
 
   const { setUserInfo } = useContext(AuthContext);
   
-  // == const token = getLoginUserInfo().token;
 
   // 요청 헤더 설정
   const requestHeader = {
